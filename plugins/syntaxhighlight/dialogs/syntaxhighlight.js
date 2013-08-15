@@ -97,18 +97,18 @@ CKEDITOR.dialog.add('syntaxhighlight', function(editor)
         minWidth: 500,
         minHeight: 400,
         onShow: function() {
-            // Try to grab the selected pre tag if any
+            // Try to grab the selected code tag if any
             var editor = this.getParentEditor();
             var selection = editor.getSelection();
             var element = selection.getStartElement();
-            var preElement = element && element.getAscendant('pre', true);
-            
+            var codeElement = element && element.getAscendant('code', true);
+
             // Set the content for the textarea
             var text = '';
             var optionsObj = null;
-            if (preElement) {
-                code = parseHtml(preElement.getHtml());
-                optionsObj = getOptionsForString(preElement.getAttribute('class'));
+            if (codeElement) {
+                code = parseHtml(codeElement.getHtml());
+                optionsObj = getOptionsForString(codeElement.getAttribute('class'));
                 optionsObj.code = code;
             } else {
                 optionsObj = getDefaultOptions();
@@ -119,19 +119,21 @@ CKEDITOR.dialog.add('syntaxhighlight', function(editor)
             var editor = this.getParentEditor();
             var selection = editor.getSelection();
             var element = selection.getStartElement();
-            var preElement = element && element.getAscendant('pre', true);
+            var codeElement = element && element.getAscendant('code', true);
             var data = getDefaultOptions();
             this.commitContent(data);
             var optionsString = getStringForOptions(data);
-            
-            if (preElement) {
-                preElement.setAttribute('class', optionsString);
-                preElement.setText(data.code);
+
+            if (codeElement) {
+                codeElement.setAttribute('class', optionsString);
+                codeElement.setText(data.code);
             } else {
-                var newElement = new CKEDITOR.dom.element('pre');
+                var newElement = new CKEDITOR.dom.element('code');
                 newElement.setAttribute('class', optionsString);
                 newElement.setText(data.code);
-                editor.insertElement(newElement);
+                var wrapperElement = new CKEDITOR.dom.element('pre');
+                wrapperElement.append(newElement);
+                editor.insertElement(wrapperElement);
             }
         },
         contents : [
